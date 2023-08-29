@@ -1,0 +1,1762 @@
+<ls:UIWidget x:Name="WorldTooltips"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+	xmlns:ls="clr-namespace:ls;assembly=SharedGUI" Template="{StaticResource Hud.Root}">
+
+	<ls:UIWidget.ContentTemplate>
+		<DataTemplate DataType="{x:Type ls:Widget}">
+			<DataTemplate.Resources>
+				<DataTemplate x:Key="CommonTooltipTemplate">
+					<Canvas  >
+						<b:Interaction.Triggers>
+							<b:EventTrigger EventName="MouseEnter">
+								<b:InvokeCommandAction Command="{Binding DataContext.SetHoveredWorldTooltipCommand, RelativeSource={RelativeSource AncestorType={x:Type ls:UIWidget}}}" CommandParameter="{Binding GameObject}" />
+							</b:EventTrigger>
+							<b:EventTrigger EventName="MouseLeave">
+								<b:InvokeCommandAction Command="{Binding DataContext.SetHoveredWorldTooltipCommand, RelativeSource={RelativeSource AncestorType={x:Type ls:UIWidget}}}" CommandParameter="" />
+							</b:EventTrigger>
+							<b:EventTrigger EventName="MouseLeftButtonUp">
+								<b:InvokeCommandAction Command="{Binding DataContext.SelectWorldTooltipCommand, RelativeSource={RelativeSource AncestorType={x:Type ls:UIWidget}}}" CommandParameter="{Binding GameObject}" />
+							</b:EventTrigger>
+						</b:Interaction.Triggers>
+						<Border Width="1024" Height="512" Canvas.Left="-512" Canvas.Top="-128">
+							<ls:LSNineSliceImage Style="{StaticResource WorldTooltip9Slice}" VerticalAlignment="Center" HorizontalAlignment="Center">
+								<b:Interaction.Behaviors>
+									<ls:DragGameObjectBehavior GameObject="{Binding Item}" StartDragOffset="10"/>
+								</b:Interaction.Behaviors>
+								<StackPanel VerticalAlignment="Center" Margin="6,-4,6,-6">
+									<StackPanel.Resources>
+										<Style TargetType="TextBlock">
+											<Setter Property="HorizontalAlignment" Value="Center"/>
+											<Setter Property="TextAlignment" Value="Center"/>
+											<Setter Property="FontSize" Value="{StaticResource ScaledMediumFontSize}"/>
+										</Style>
+									</StackPanel.Resources>
+									<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+										<TextBlock x:Name="NameTxt" ls:TextBlockFormatter.SourceText="{Binding Name}" Foreground="{StaticResource TooltipColor.Title}" Visibility="{Binding Name, Converter={StaticResource StringToVisibilityConverter}}" FontSize="{StaticResource MediumFontSize}"/>
+										<TextBlock x:Name="ExtraInfo" Foreground="{StaticResource TooltipColor.Secondary}" Visibility="Collapsed"/>
+									</StackPanel>
+
+									<TextBlock x:Name="DescriptionTxt" ls:TextBlockFormatter.SourceText="{Binding Description}" Foreground="{StaticResource TooltipColor.Primary}" Visibility="{Binding Description, Converter={StaticResource StringToVisibilityConverter}}"/>
+								</StackPanel>
+							</ls:LSNineSliceImage>
+						</Border>
+					</Canvas>
+					<DataTemplate.Triggers>
+						<DataTrigger Binding="{Binding Item.Rarity}" Value="Uncommon">
+							<Setter TargetName="NameTxt" Property="Foreground" Value="{StaticResource ItemRarityColour.Uncommon}"/>
+						</DataTrigger>
+						<DataTrigger Binding="{Binding Item.Rarity}" Value="Rare">
+							<Setter TargetName="NameTxt" Property="Foreground" Value="{StaticResource ItemRarityColour.Rare}"/>
+						</DataTrigger>
+						<DataTrigger Binding="{Binding Item.Rarity}" Value="VeryRare">
+							<Setter TargetName="NameTxt" Property="Foreground" Value="{StaticResource ItemRarityColour.VeryRare}"/>
+						</DataTrigger>
+						<DataTrigger Binding="{Binding Item.Rarity}" Value="Legendary">
+							<Setter TargetName="NameTxt" Property="Foreground" Value="{StaticResource ItemRarityColour.Legendary}"/>
+						</DataTrigger>
+						<DataTrigger Binding="{Binding Item.IsStoryItem}" Value="True">
+							<Setter TargetName="NameTxt" Property="Foreground" Value="{StaticResource LS_storyColor}"/>
+						</DataTrigger>
+						<DataTrigger Binding="{Binding IsStealing}" Value="True">
+							<Setter TargetName="NameTxt" Property="Foreground" Value="{StaticResource LS_alertTxtColor}"/>
+						</DataTrigger>
+
+						<!-- MOD START -->
+						<!-- Display all containers in the tooltip -->
+						<DataTrigger Binding="{Binding ContainerState}" Value="Empty">
+							<!-- <Setter TargetName="ExtraInfo" Property="Text" Value="{Binding Source='h823595e6g550fg4614gb1ddgdcd323bb4c69',Converter={StaticResource TranslatedStringConverter}, StringFormat='{} - {0}'}"/>
+							<Setter TargetName="ExtraInfo" Property="Visibility" Value="Visible"/>	-->
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+						<!-- MOD END -->
+
+						<DataTrigger Binding="{Binding ContainerState}" Value="NotExplored">
+							<Setter TargetName="ExtraInfo" Property="Text" Value="*"/>
+							<Setter TargetName="ExtraInfo" Property="Visibility" Value="Visible"/>
+						</DataTrigger>
+
+						<!-- MOD START -->
+						<!-- Hide useless items-->
+						<DataTrigger Binding="{Binding Name}" Value="%%% Do not destub - Archery Target">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Absolute's Door">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Ancient Sigil Circle">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Anomalous Coral">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Anvil">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Arcane Brazier">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Arcane Barrier">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Arcane Machinery Pipes">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Archery Target">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Armillary Sphere">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bag of Rotten Food">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Barricade">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Barrier Generator">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Battered Cauldron">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bear Statue">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Beckoning Cave">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bed">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bedroll">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bed Linen">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bellows">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bird Droppings">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Blackboard">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Blacksmith's Bellows">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Blacksmith's Tongs">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Blank Canvas">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Blood-Soaked Altar">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bloody Footprint">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bloody Towels">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bone">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bones">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bonfire">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bookcase">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Booze Tub">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bottle">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bottled Blooms">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bowl">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Brazier">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Broken Cane">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Broken Club">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Broken Cupboard">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Broken Door">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Broken Lute">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Broken Padded Armour">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Broken Shackles">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Broken Support Pillar">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Broken Zaith'isk">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bronze Keg">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Broom">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Broom and Bucket">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bubbling Cauldron">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bucket">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bucket of Water">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bundle of Incense">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bunk Bed">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Bust">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Cable Car">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Cable Car Wheel">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Cage Door">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Campfire">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Candelabra">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Candle">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Candles">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Candlestick">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Canopy Bed">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Canteen">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Cauldron">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Carafe of Water">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Casket Lid">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Cell Grate">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Chains">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Chair">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Chandelier">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Clamshell">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Clothes Line">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Coal Bucket">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Conch Shell">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Condensers and Alembics">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Conical Flask">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Control panel with a unique slot">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Cooking Pot">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Crate">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Cracked Stones">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Cracked Support Beam">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Crest Panel">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Crumbled Sarcophagus">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Crystal">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Crystal Ball">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Crystal Vase">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Cup">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Cup of Oil">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Cup of Water">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Cutting Board">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Damaged Cage">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Damaged Pillar">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Darkmaw the Wicked">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Dawnbreaker">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Daybreak Gate">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Defaced Statue of Shar">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Deformed Chair">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Dirt Mound">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Dirt Pile">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Dirty Toilet Seat">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Do not destub -Archery Target">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Door">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Double Doors">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Double Iron Doors">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Double Oak Doors">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Drinking Horn">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Drying Rack">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Eagle Statue">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Earthen Bottle">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Easel">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Elegant Stool">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Elevator">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Elk Statue">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Empty Bloodbank Bottle">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Empty Bloodbank Jar">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Empty Condensers and Alembics">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Empty Plate">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Empty Potion Bottle">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Enchanted Door">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Eyes of Selûne">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Fallen Tree">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Fireflies">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Firewood">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Fish Skeleton">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Fishing Rod">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Flame">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Flask Stand">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Flat Rock">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Folding Screen">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Fork">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Gargoyle Statue">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Gilded Mortar and Pestle">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Glass Chalice">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Glowing Bulb">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Glowing Gem">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Go To Bed">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Goblet with Dead Tadpoles">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Golden Candelabrum">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Golden Hinge">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Granite Bench">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Granite Pew">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Grated Iron Doors">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Grave Marker">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Glass Cup">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Glass Distillation Set">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Glass Retort">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Globe">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Goblet">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Gore Pile">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Granite Chair">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Half-Eaten Apple">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Hammer">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Heavy Oak Doors">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Heavy Stone">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Hidden Passage">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Hinge">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Hollow Shell">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Horn Shell">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Hourglass">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Ichorous Egg Clutch">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Improvised Drumstick">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Incense">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Incense Bowl">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Ink Pot">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Ink Pot and Quill">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Intestines">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Intricate Door">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Iridescent Shell">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Iron Bowl">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Iron Candelabrum">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Iron Gate">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Iron Grate">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Iron Hinge">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Iron Pan">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Ink Pot">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Iron Torch">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Iron Pan">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Jug">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Ladle">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Ladder">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Lanceboard">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Lantern">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Large Bottle">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Large Vase">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Laser">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Lavish Chair">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Lathander Solar Machine">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Lid">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Log">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Magnifying Glass">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Mahogany Bench">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Makeshift Ladle">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Makeshift Torch">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Makeshift Training Dummy">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Marble Plate">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Metal Door">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Metal Fork">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Microscope">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Milestone">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Milk Can">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Mirror">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Mortar and Pestle">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Moss-Covered Altar">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Moss-Covered Stone">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Mouldering Casket">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Mountain Pass">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Mucoid Shell">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Mug">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Mug of Beer">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Mushroom Circle">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Music Box">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Not Found">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Oak Door">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Oblong Cylinder">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="OBJ_GenericImmutableObject">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Object">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Oil Lamp">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Open Casket">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Open Crate">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Ornate Door">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Outhouse Door">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Padded Armchair">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Padded Chair">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Padded Sofa">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Painted Mirror">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Pan">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Phase Spider Egg">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Pile of Fish">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Pile of Rags">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Pile of Sacks">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Planecaster">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Planks">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Plate">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Portal">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Portcullis">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Portrait">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Pot Lid">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Practice Dummy">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Practice Sword">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Purulent Bulb">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Quill">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Relief of Selûne">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Ribcage">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rickety Chair">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rock">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rock Face">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rotten Banana">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rotten Beregost Blue Wedge">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rotten Beregost Bluecheese">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rotten Carrot">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rotten Chicken Eggs">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rotten Durinbold Cheese Wedge">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rotten Lemon">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rotten Fish">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rotten Mushroom">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rotten Tomato">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rotten Warning Sign">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rotted Waterdhavian Cheese Wedge">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rotting Bag">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rotting Basket">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Round Flask">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rothé Femur">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rusted Prison Door">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rusty Dagger">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rusty Longsword">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rusty Mace">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rusty Shortsword">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rusty Spear">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Sarcophagus">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Scale">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Secret Stairway">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Separatory Funnel">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Serving Spoon">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Severed Arm">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Severed Foot">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Severed Hand">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Severed Head">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Severed Leg">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Severed Torso">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Shabby Door">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Shabby Wooden Doors">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Shackles">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Shattered Anvil">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Shattered Wine Barrel">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Shears">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Sign">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Sign Post">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Signpost">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Silver Cake Stand">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Silver Fork">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Silver Glass">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Silver Knife">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Silver Plate">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Silver Spoon">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Silver Tray">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Skull">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Skull Lantern">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Small Shovel">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Smithy Sign">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Soap">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Soap Bar">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Sodalite Shell">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Spiderweb">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Spider Egg">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Spider Silk Cocoon">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Spider Web">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Spinning Wheel">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Spiral Stairs">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Spoiled Treacle Tart">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Sponge Tray">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Stacked Towels">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Stained Towel">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Stained Towels Pile">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Standing Brazier">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Standing Mirror">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Standing Torch">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Starfish">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Statue">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Statue ">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Statue (2)">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Statue of Selune">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Statue of Selûne">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Statue of Shar">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Stone Bed">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Stone Bench">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Stone Urn">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Stone Wall">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Stool">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Stuffed Bear">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Stuffed Bear Head">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Stuffed Boar Head">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Stuffed Deep Rothé Head">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Stuffed Hook Horror Head">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Stuffed Hyena Head">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Stuffed Ogre Head">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Stuffed Owlbear Toy">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Stuffed Mind Flayer Head">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Stuffed Wolf Head">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Support Beam">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Surgery kit">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Surgery Kit">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Table">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Teleportation Platform">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Telescope">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Tent">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Tent Pole">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Tiered Shelves">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Tin Cup">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Tin Plate">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Toad Teapot">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Tomb">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Tongs">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Torch">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Torture Rack">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Towel">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Toy Block">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Training Shield">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Trapped Beacon">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Underdark Duergar Boat">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Unstable Statue">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Vat of Oil">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Vault Door">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Vent">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Viscid Remains">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wall">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="War Drum">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Water">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Water Pump">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Weathered Chisel Set">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wine Goblet">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Withered Blue Petal">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wolf Statue">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wooden Bench">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wooden Bowl">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wooden Box">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wooden Bucket">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wooden Cask">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wooden Cup">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wooden Hinge">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wooden Lid">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wooden Planks">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wooden Shelf">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wooden Shelves">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wooden Spoon">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wooden Support">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wooden Tub">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wheel">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wheelbarrow">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Whetstone">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wrought-Iron Gate">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Zaith'isk">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Zurkhwood Skiff">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<!-- OPTIONNAL STUFF -->
+						<!-- The following items are removed but could be added back (informative items, important begginer items like shovels, combat items like barrels, stuffed with mostly useless items like vases)-->
+
+						<DataTrigger Binding="{Binding Name}" Value="Arrow">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Burlap Sack">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Burlap Sacks">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Damaged Vase">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Firewine Barrel">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Lathander Sign">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Nautiloid Tank">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Oil Barrel">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Pickaxe">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Plaque">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Rope">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Shovel">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Vase">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+
+						<DataTrigger Binding="{Binding Name}" Value="Wicker Basket">
+							<Setter Property="Visibility" Value="Hidden"/>
+						</DataTrigger>
+						<!-- MOD END -->
+					</DataTemplate.Triggers>
+				</DataTemplate>
+			</DataTemplate.Resources>
+
+			<Grid>
+				<!-- Show all the world tooltips for this player -->
+				<ItemsControl ItemsSource="{Binding CurrentPlayer.WorldTooltips}" ItemTemplate="{StaticResource CommonTooltipTemplate}" x:Name="WorldTooltipContainer" IsHitTestVisible="True">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<ls:LSWorldTooltipsCanvas ClipToBounds="True"/>
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemContainerStyle>
+						<Style TargetType="ContentPresenter">
+							<Setter Property="Canvas.Left" Value="{Binding Position.X}"/>
+							<Setter Property="Canvas.Top" Value="{Binding Position.Y}"/>
+							<Setter Property="Canvas.ZIndex" Value="1"/>
+							<Style.Triggers>
+								<Trigger Property="IsMouseOver" Value="True">
+									<Setter Property="Canvas.ZIndex" Value="1000" />
+								</Trigger>
+							</Style.Triggers>
+						</Style>
+					</ItemsControl.ItemContainerStyle>
+				</ItemsControl>
+
+				<!-- MOD START - Show tooltips without requiring input held down -->
+				<ls:LSInputBinding BoundEvent="ShowWorldTooltips" Command="{Binding SetShowWorldTooltipsCommand}" IsEnabled="{Binding ElementName=WorldTooltipContainer, Path=IsHitTestVisible}" CommandParameter="{StaticResource FalseValue}" EatInput="True"/>
+				<ls:LSInputBinding BoundEvent="ShowWorldTooltips" Command="{Binding SetShowWorldTooltipsCommand}" EatInput="True"/>
+				<!-- MOD END -->
+			</Grid>
+			<DataTemplate.Triggers>
+				<DataTrigger Binding="{Binding CurrentPlayer.WorldTooltips.Count}" Value="0">
+					<Setter TargetName="WorldTooltipContainer" Property="IsHitTestVisible" Value="False"/>
+				</DataTrigger>
+			</DataTemplate.Triggers>
+		</DataTemplate>
+	</ls:UIWidget.ContentTemplate>
+	<!-- MOD START - Show tooltips when UI changes -->
+	<!--<b:Interaction.Triggers>
+        <b:PropertyChangedTrigger Binding="{Binding CurrentPlayer.UIData.ActiveState}">
+            <b:InvokeCommandAction Command="{Binding SetShowWorldTooltipsCommand}" CommandParameter="{StaticResource FalseValue}"/>
+        </b:PropertyChangedTrigger>
+    </b:Interaction.Triggers>-->
+	<!-- MOD END -->
+</ls:UIWidget>
